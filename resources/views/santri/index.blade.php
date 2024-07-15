@@ -29,15 +29,17 @@
                                             </p>
                                         </div>
 
-                                        <div>
-                                            <div class="inline-flex">
+                                        @can('manage santri')
+                                            <div>
+                                                <div class="inline-flex">
 
-                                                <a class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                                    href="{{ route('santri.create') }}">
-                                                    Tambah Santri
-                                                </a>
+                                                    <a class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                        href="{{ route('santri.create') }}">
+                                                        Tambah Santri
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endcan
                                     </div>
                                     <!-- End Header -->
 
@@ -123,7 +125,7 @@
                                                     <td class="size-px whitespace-nowrap">
                                                         <div class="px-6 py-3">
                                                             <span
-                                                                class="block text-sm font-semibold text-gray-800">{{ $santri->user->email ?? 'kontol' }}</span>
+                                                                class="block text-sm font-semibold text-gray-800">{{ $santri->user->email }}</span>
                                                             <span class="block text-sm text-gray-500">********</span>
                                                         </div>
                                                     </td>
@@ -136,18 +138,20 @@
                                                             {{ $santri->alamat }}
                                                         </div>
                                                     </td>
-                                                    <td class="size-px whitespace-nowrap">
-                                                        <div class="px-6 py-1.5 flex justify-end gap-x-2">
-                                                            <x-primary-button x-data=""
-                                                                x-on:click="$dispatch('open-modal', 'edit-{{ $santri->id }}')">
-                                                                Edit
-                                                            </x-primary-button>
-                                                            <x-danger-button x-data=""
-                                                                x-on:click="$dispatch('open-modal', 'confirm-delete-{{ $santri->id }}')">
-                                                                Hapus
-                                                            </x-danger-button>
-                                                        </div>
-                                                    </td>
+                                                    @can('manage santri')
+                                                        <td class="size-px whitespace-nowrap">
+                                                            <div class="px-6 py-1.5 flex justify-end gap-x-2">
+                                                                <x-primary-button x-data=""
+                                                                    x-on:click="$dispatch('open-modal', 'edit-{{ $santri->id }}')">
+                                                                    Edit
+                                                                </x-primary-button>
+                                                                <x-danger-button x-data=""
+                                                                    x-on:click="$dispatch('open-modal', 'confirm-delete-{{ $santri->id }}')">
+                                                                    Hapus
+                                                                </x-danger-button>
+                                                            </div>
+                                                        </td>
+                                                    @endcan
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -157,6 +161,8 @@
                             </div>
                         </div>
                     </div>
+
+                    @include('partials.daftar_ustadz')
                     <!-- End Card -->
                 </div>
             </div>

@@ -20,10 +20,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('santri', SantriController::class);
     Route::resource('surah', SurahController::class);
     Route::resource('hafalan', HafalanController::class);
+    Route::post('/ustadz', [SantriController::class, 'addUstadz'])->name('ustadz.store');
+    Route::post('/updateUstadz/{id}', [SantriController::class, 'updateUstadz'])->name('updateUstadz');
+    Route::post('/destroyUstadz/{id}', [SantriController::class, 'destroyUstadz'])->name('destroyUstadz');
 });
 
 require __DIR__ . '/auth.php';

@@ -11,29 +11,41 @@
                 </div>
 
                 <!-- Navigation Links -->
+
+                {{-- dashboard --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                {{-- santri --}}
+                @canany(['manage santri', 'add comment'])
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('santri.index')" :active="request()->routeIs('santri.*')">
+                            @if (Auth::user()->can('manage santri'))
+                                {{ __('Daftar Santri dan Ustadz') }}
+                            @else
+                                {{ __('Daftar Santri') }}
+                            @endif
+                        </x-nav-link>
+                    </div>
+                @endcanany
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('santri.index')" :active="request()->routeIs('santri.*')">
-                        {{ __('Daftar Santri') }}
-                    </x-nav-link>
-                </div>
-
+                {{-- surah --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('surah.index')" :active="request()->routeIs('surah.*')">
                         {{ __('Daftar surah') }}
                     </x-nav-link>
                 </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
-                        {{ __('Daftar hafalan Santri') }}
-                    </x-nav-link>
-                </div>
+                @canany(['manage santri', 'add comment'])
+                    {{-- hafalan santri --}}
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
+                            {{ __('Daftar hafalan Santri') }}
+                        </x-nav-link>
+                    </div>
+                @endcanany
             </div>
 
             <!-- Settings Dropdown -->
@@ -56,9 +68,11 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
+                        @can('manage santri')
+                            <x-dropdown-link :href="route('profile.edit')">
+                                {{ __('Profile') }}
+                            </x-dropdown-link>
+                        @endcan
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -92,26 +106,37 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+        {{-- dashboard --}}
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('santri.index')" :active="request()->routeIs('santri.*')">
-                {{ __('Daftar Santri') }}
-            </x-responsive-nav-link>
-        </div>
+
+        @canany(['manage santri', 'add comment'])
+            {{-- santri --}}
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('santri.index')" :active="request()->routeIs('santri.*')">
+                    {{ __('Daftar Santri') }}
+                </x-responsive-nav-link>
+            </div>
+        @endcanany
+
+        {{-- surah --}}
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('surah.index')" :active="request()->routeIs('surah.*')">
                 {{ __('Daftar surah') }}
             </x-responsive-nav-link>
         </div>
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
-                {{ __('Daftar hafalan santri') }}
-            </x-responsive-nav-link>
-        </div>
+
+        @canany(['manage santri', 'add comment'])
+            {{-- hafalan santri --}}
+            <div class="pt-2 pb-3 space-y-1">
+                <x-responsive-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
+                    {{ __('Daftar hafalan santri') }}
+                </x-responsive-nav-link>
+            </div>
+        @endcanany
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
@@ -121,9 +146,11 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
+                @can('manage santri')
+                    <x-responsive-nav-link :href="route('profile.edit')">
+                        {{ __('Profile') }}
+                    </x-responsive-nav-link>
+                @endcan
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

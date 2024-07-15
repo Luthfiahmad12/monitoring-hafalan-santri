@@ -1,5 +1,5 @@
 @foreach ($santris as $santri)
-    <x-modal name="confirm-delete-{{ $santri->id }}" :show="$errors->isNotEmpty()" focusable>
+    <x-modal name="confirm-delete-{{ $santri->id }}" focusable>
         <form method="post" action="{{ route('santri.destroy', $santri->id) }}" class="p-6">
             @csrf
             @method('delete')

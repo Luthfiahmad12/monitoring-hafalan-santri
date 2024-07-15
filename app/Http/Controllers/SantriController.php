@@ -16,7 +16,8 @@ class SantriController extends Controller
     public function index()
     {
         $santris = Santri::all();
-        return view('santri.index', compact('santris'));
+        $users = User::role('ustadz')->get();
+        return view('santri.index', compact('santris', 'users'));
     }
 
     /**
@@ -116,10 +117,65 @@ class SantriController extends Controller
     public function destroy(string $id)
     {
         $santri = Santri::find($id);
-        if($santri) {
+        if ($santri) {
             User::where('name', $santri->name)->first()->delete();
         }
         $santri->delete();
         return back()->with('success', 'Data santri berhasil dihapus');
+    }
+
+    public function addUstadz(Request $request)
+    {
+        $validated = $request->validateWithBag('CreateData', [
+            'name' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'unique:users,email'],
+            'password' => ['required', 'min:8'],
+        ], [
+            'password.min' => 'Password minimal 8 karakter',
+            'email.unique' => 'Email sudah terdaftar',
+            'required' => ':attribute harus diisi',
+            'min' => ':attribute minimal :min karakter',
+        ]);
+
+        $validated['password'] = bcrypt($validated['password']);
+
+        $user = User::create($validated);
+        $user->assignRole('ustadz');
+
+        return back()->with('success', 'Data ustadz berhasil ditambahkan');
+    }
+
+    public function updateUstadz(string $id, Request $request)
+    {
+        $validated = $request->validateWithBag('updateData', [
+            'name' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'unique:users,email,' . $id],
+            'password' => ['nullable', 'min:8'],
+        ], [
+            'password.min' => 'Password minimal 8 karakter',
+            'email.unique' => 'Email sudah terdaftar',
+            'required' => ':attribute harus diisi',
+            'min' => ':attribute minimal :min karakter',
+        ]);
+
+        $user = User::find($id);
+
+        if ($request->filled('password')) {
+            $validated['password'] = bcrypt($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $user->update($validated);
+        return back()->with('success', 'Data ustadz berhasil diubah');
+    }
+
+    public function destroyUstadz(string $id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->delete();
+        }
+        return back()->with('success', 'Data ustadz berhasil dihapus');
     }
 }

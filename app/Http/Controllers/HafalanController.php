@@ -48,8 +48,11 @@ class HafalanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'santri_id' => ['required', 'numeric'],
+            'santri_id' => ['required'],
             'nama_surah' => ['required'],
+        ], [
+            'santri_id.required' => 'Pilih Santri terlebih dahulu',
+            'nama_surah.required' => 'Pilih Surah terlebih dahulu',
         ]);
 
         $surah = Surah::updateOrCreate(
@@ -67,7 +70,7 @@ class HafalanController extends Controller
                 'santri_id' => $validated['santri_id'],
                 'surah_id' => $surah->id,
             ]);
-            return back()->with('success', 'Hafalan Berhasilt Ditambahkan');
+            return back()->with('success', 'Hafalan Berhasil Ditambahkan');
         }
     }
 
@@ -93,7 +96,10 @@ class HafalanController extends Controller
     public function update(Request $request, string $id)
     {
         $hafalan = Hafalan::with('comments.user')->find($id);
-        $hafalan->update(['status' => $request->status ?? false]);
+        $hafalan->update([
+            'status' => $request->status ?? false,
+            'penilaian' => $request->penilaian ?? null,
+        ]);
         $hafalan->comments()->create([
             // 'hafalan_id' => $hafalan->id, //otomatis terambil
             'user_id' => auth()->user()->id,

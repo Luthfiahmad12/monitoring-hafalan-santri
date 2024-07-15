@@ -22,17 +22,17 @@
                 <div class="sm:col-span-9">
                     <select name="santri_id"
                         class="block w-full px-4 py-3 text-sm border-gray-200 rounded-lg pe-9 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                        <option selected="">Open this select menu</option>
+                        <option value="" selected>Pilih Santri</option>
                         @foreach ($santris as $santri)
                             <option value="{{ $santri->id }}">{{ $santri->name }}</option>
                         @endforeach
                     </select>
-                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('santri_id')" class="mt-2" />
                 </div>
                 <!-- End Col -->
 
                 <div class="sm:col-span-3">
-                    <label for="af-account-email" class="inline-block text-sm text-gray-800 mt-2.5">
+                    <label for="surah" class="inline-block text-sm text-gray-800 mt-2.5">
                         Nama Surah
                     </label>
                 </div>
@@ -41,13 +41,13 @@
                 <div class="sm:col-span-9">
                     <select name="nama_surah"
                         class="block w-full px-4 py-3 text-sm border-gray-200 rounded-lg pe-9 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                        <option selected="">Open this select menu</option>
+                        <option value="" selected>Pilih Surah</option>
                         @foreach ($daftarSurah as $item)
                             <option value="{{ $item['namaLatin'] }}">
                                 {{ $item['namaLatin'] }} ({{ $item['nama'] }})</option>
                         @endforeach
                     </select>
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('nama_surah')" class="mt-2" />
                 </div>
             </div>
             <!-- End Grid -->
@@ -65,7 +65,7 @@
 </x-modal>
 
 @foreach ($hafalans as $hafalan)
-    <x-modal name="delete-{{ $hafalan->id }}" :show="true" focusable>
+    <x-modal name="delete-{{ $hafalan->id }}" focusable>
         <form method="post" action="{{ route('hafalan.destroy', $hafalan->id) }}" class="p-6">
             @csrf
             @method('delete')
@@ -90,7 +90,7 @@
         </form>
     </x-modal>
 
-    <x-modal name="show-{{ $hafalan->id }}" :show="$errors->isNotEmpty()" focusable>
+    <x-modal name="show-{{ $hafalan->id }}" focusable>
         <div class="p-6">
 
             <!-- Timeline -->
@@ -120,9 +120,6 @@
                             <h3 class="flex gap-x-1.5 font-semibold text-gray-800 dark:text-white">
                                 {{ $comment->comment }}
                             </h3>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-neutral-400">
-                                Finally! You can check it out here.
-                            </p>
                             <button type="button"
                                 class="inline-flex items-center p-1 mt-1 text-xs text-gray-500 border border-transparent rounded-lg -ms-1 gap-x-2 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-700">
                                 <img class="flex-shrink-0 rounded-full size-4"
@@ -143,36 +140,45 @@
                 <!-- End Item -->
             </div>
             <!-- End Timeline -->
-            @if ($hafalan->status !== 1)
-                <form action="{{ route('hafalan.update', $hafalan->id) }}" method="post">
-                    @csrf
-                    @method('PUT')
+            @can('add comment')
+                @if ($hafalan->status !== 1)
+                    <form action="{{ route('hafalan.update', $hafalan->id) }}" method="post">
+                        @csrf
+                        @method('PUT')
 
-                    <div class="mt-8">
-                        <x-input-label for="catatan" :value="__('Tambah Catatan')" />
-                        <x-text-input id="catatan" class="block w-full mt-1" type="text" name="comment"
-                            :value="old('catatan')" />
-                        <x-input-error :messages="$errors->get('catatan')" class="mt-2" />
-                    </div>
-                    <div class="mt-3">
-                        <div class="flex text-medium">
-                            <input type="checkbox" name="status" value="1"
-                                class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                                id="hs-default-checkbox">
-                            <label for="hs-default-checkbox"
-                                class="text-sm text-gray-500 ms-3 dark:text-neutral-400">Selesai</label>
+                        <div class="mt-8">
+                            <x-input-label for="comment" :value="__('Tambah Catatan')" />
+                            <x-text-input id="comment" class="block w-full mt-1" type="text" name="comment"
+                                :value="old('comment')" required />
+                            <x-input-error :messages="$errors->get('comment')" class="mt-2" />
                         </div>
-                    </div>
-                    <div class="flex justify-end mt-3 gap-x-2">
-                        <x-danger-button type="button" x-on:click="$dispatch('close')">
-                            Close
-                        </x-danger-button>
-                        <x-primary-button>
-                            Submmit
-                        </x-primary-button>
-                    </div>
-                </form>
-            @endif
+                        <div x-data="{ open: false }">
+                            <div class="mt-3">
+                                <div class="flex text-medium">
+                                    <input type="checkbox" @click="open = !open" name="status" value="1"
+                                        class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                                        id="hs-default-checkbox">
+                                    <label for="hs-default-checkbox" class="text-sm text-gray-800 ms-3">Selesai</label>
+                                </div>
+                                <div class="mt-3" x-show="open">
+                                    <x-input-label for="penilaian" :value="__('Nilai')" />
+                                    <x-text-input id="penilaian" class="block w-full mt-1" type="text" name="penilaian"
+                                        :value="old('penilaian')" />
+                                    <x-input-error :messages="$errors->get('penilaian')" class="mt-2" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-3 gap-x-2">
+                            <x-danger-button type="button" x-on:click="$dispatch('close')">
+                                Close
+                            </x-danger-button>
+                            <x-primary-button>
+                                Submit
+                            </x-primary-button>
+                        </div>
+                    </form>
+                @endif
+            @endcan
         </div>
     </x-modal>
 @endforeach

@@ -7,14 +7,14 @@
                         <div id="alert"
                             class="p-4 mb-4 text-sm text-teal-800 bg-teal-100 border border-teal-200 rounded-lg"
                             role="alert">
-                            <span class="font-bold">Sukses</span>
+                            <span class="font-bold mr-1">Success</span>
                             {{ session('success') }}
                         </div>
                     @elseif (session()->has('warning'))
                         <div id="alert">
                             <div class="p-4 mb-4 text-sm text-yellow-800 bg-yellow-100 border border-yellow-200 rounded-lg"
                                 role="alert">
-                                <span class="font-bold">Warning</span>
+                                <span class="font-bold mr-1">Warning</span>
                                 {{ session('warning') }}
                             </div>
                         </div>
@@ -36,15 +36,16 @@
                                             </p>
                                         </div>
 
-                                        <div>
-                                            <div class="inline-flex">
-
-                                                <x-primary-button x-data=""
-                                                    x-on:click="$dispatch('open-modal', 'create-data')">
-                                                    Tambah Hafalan Santri
-                                                    </x-primary->
+                                        @can('manage hafalan')
+                                            <div>
+                                                <div class="inline-flex">
+                                                    <x-primary-button x-data=""
+                                                        x-on:click="$dispatch('open-modal', 'create-data')">
+                                                        Tambah Hafalan Santri
+                                                        </x-primary->
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endcan
                                     </div>
                                     <!-- End Header -->
 
@@ -62,6 +63,9 @@
                                                     class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-start">
                                                     Status</th>
                                                 <th scope="col"
+                                                    class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-start">
+                                                    Nilai</th>
+                                                <th scope="col"
                                                     class="px-6 py-3 text-xs font-medium text-gray-500 uppercase"></th>
                                             </tr>
                                         </thead>
@@ -75,21 +79,31 @@
                                                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                                                         {{ $hafalan->surah->nama_surah }}
                                                     </td>
+                                                    <td class="px-6 py-4 text-md text-gray-800 whitespace-nowrap">
+                                                        <span
+                                                            class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-sm font-medium border {{ $hafalan->status == 1 ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500' }}">
+                                                            {{ $hafalan->status == 1 ? 'Selesai' : 'Belum Selesai' }}
+                                                        </span>
+                                                    </td>
                                                     <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                                                        {{ $hafalan->status }}
+                                                        {{ $hafalan->penilaian ?? 'Belum Dinilai' }}
                                                     </td>
                                                     <td
                                                         class="px-6 py-4 text-sm font-medium text-end whitespace-nowrap">
                                                         <div class="px-6 py-1.5 flex justify-end gap-x-2">
-                                                            <x-primary-button x-data=""
-                                                                x-data=""
-                                                                x-on:click="$dispatch('open-modal', 'show-{{ $hafalan->id }}')">
-                                                                Detail
-                                                            </x-primary-button>
-                                                            <x-danger-button type="button" x-data=""
-                                                                x-on:click="$dispatch('open-modal', 'delete-{{ $hafalan->id }}')">
-                                                                Hapus Hafalan
-                                                            </x-danger-button>
+                                                            @canany(['add comment', 'manage hafalan'])
+                                                                <x-primary-button x-data=""
+                                                                    x-data=""
+                                                                    x-on:click="$dispatch('open-modal', 'show-{{ $hafalan->id }}')">
+                                                                    Detail
+                                                                </x-primary-button>
+                                                            @endcanany
+                                                            @can('manage hafalan')
+                                                                <x-danger-button type="button" x-data=""
+                                                                    x-on:click="$dispatch('open-modal', 'delete-{{ $hafalan->id }}')">
+                                                                    Hapus Hafalan
+                                                                </x-danger-button>
+                                                            @endcan
                                                         </div>
                                                     </td>
                                                 </tr>

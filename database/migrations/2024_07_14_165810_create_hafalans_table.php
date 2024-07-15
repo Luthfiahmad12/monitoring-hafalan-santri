@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('santri_id')->constrained()->cascadeOnDelete();
             $table->foreignId('surah_id')->constrained()->cascadeOnDelete();
             $table->boolean('status')->default(false);
+            $table->tinyInteger('penilaian')->nullable();
             $table->timestamps();
         });
     }
