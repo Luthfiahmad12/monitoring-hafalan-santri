@@ -46,6 +46,22 @@
                         </x-nav-link>
                     </div>
                 @endcanany
+
+                @can('manage santri')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
+                            {{ __('Daftar hafalan Santri') }}
+                        </x-nav-link>
+                    </div>
+                @endcan
+
+                @can('manage santri')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('laporan')" :active="request()->routeIs('hafalan.*')">
+                            {{ __('Laporan Hafalan') }}
+                        </x-nav-link>
+                    </div>
+                @endcan
             </div>
 
             <!-- Settings Dropdown -->
@@ -132,8 +148,8 @@
         @canany(['manage santri', 'add comment'])
             {{-- hafalan santri --}}
             <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('hafalan.index')" :active="request()->routeIs('hafalan.*')">
-                    {{ __('Daftar hafalan santri') }}
+                <x-responsive-nav-link :href="route('laporan')" :active="request()->routeIs('laporan')">
+                    {{ __('Laporan Hafalan') }}
                 </x-responsive-nav-link>
             </div>
         @endcanany

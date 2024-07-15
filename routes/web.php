@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/ustadz', [SantriController::class, 'addUstadz'])->name('ustadz.store');
     Route::post('/updateUstadz/{id}', [SantriController::class, 'updateUstadz'])->name('updateUstadz');
     Route::post('/destroyUstadz/{id}', [SantriController::class, 'destroyUstadz'])->name('destroyUstadz');
+    Route::get('laporan', [HafalanController::class, 'laporan'])->name('laporan');
 });
 
 require __DIR__ . '/auth.php';

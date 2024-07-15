@@ -118,4 +118,14 @@ class HafalanController extends Controller
         $hafalan->delete();
         return back()->with('success', 'Hafalan Berhasilt Dihapus');
     }
+
+    public function laporan(Request $request)
+    {
+
+        $hafalans = Hafalan::with('santri', 'surah')->where('santri_id', $request->santri_id)->get();
+
+        $santris = Santri::all();
+
+        return view('laporan', compact('hafalans', 'santris'));
+    }
 }
