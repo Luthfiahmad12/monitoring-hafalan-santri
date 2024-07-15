@@ -97,7 +97,8 @@
                             <!-- End Card -->
                         </div>
                     @else
-                        <span class="text-xl font-bold text-gray-800 text-center">Belum ada hafalan</span>
+                        <span class="mb-8 flex justify-center items-center text-md text-gray-800 ">Belum ada
+                            hafalan, silahkan konfirmasi ke admin</span>
                     @endif
                 @endcan
             </div>
