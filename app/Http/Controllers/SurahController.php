@@ -73,12 +73,26 @@ class SurahController extends Controller
      */
     public function show(string $nomor)
     {
-        $json = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->get('http://equran.id/api/v2/surat/' . $nomor)->json();
-        $detailSurah = $json['data'];
-        // dd($detailSurah);
-        // return view('surah.show');
+        $detailSurah = Cache::remember('surah_detail_' . $nomor, 60, function () use ($nomor) {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->get('http://equran.id/api/v2/surat/' . $nomor);
+
+            // Pastikan bahwa respons berhasil
+            if ($response->successful()) {
+                return $response->json()['data'];
+            }
+
+            // Tangani jika respons gagal (opsional)
+            return null;
+        });
+
+        // Periksa apakah $detailSurah null
+        if (is_null($detailSurah)) {
+            // Tangani kasus di mana data tidak dapat diambil dari API
+            // Misalnya, Anda bisa mengarahkan ke halaman error atau memberikan pesan kesalahan
+            return back()->with('error', 'Data surah tidak dapat ditemukan. Coba beberapa saat lagi');
+        }
 
         return view('surah.show', compact('detailSurah'));
     }

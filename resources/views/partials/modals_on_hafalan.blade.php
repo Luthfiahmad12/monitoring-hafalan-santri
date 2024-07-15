@@ -65,7 +65,7 @@
 </x-modal>
 
 @foreach ($hafalans as $hafalan)
-    <x-modal name="delete-{{ $hafalan->id }}" :show="$errors->isNotEmpty()" focusable>
+    <x-modal name="delete-{{ $hafalan->id }}" :show="true" focusable>
         <form method="post" action="{{ route('hafalan.destroy', $hafalan->id) }}" class="p-6">
             @csrf
             @method('delete')
